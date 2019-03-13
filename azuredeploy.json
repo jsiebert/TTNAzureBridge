@@ -49,6 +49,36 @@
             "metadata": {
                 "description": "Location for all resources."
             }
+        },
+        "hubHostname": {
+            "type": "string",
+            "metadata": {
+                "description": "The Hostname of the Azure IoT Hub"
+            }
+        },
+        "hubAccessKeyOwner": {
+            "type": "string",
+            "metadata": {
+                "description": "The Owner of the Azure IoT Hub Access Key"
+            }
+        },
+        "hubAccessKey": {
+            "type": "string",
+            "metadata": {
+                "description": "The Access Key of the Azure IoT Hub"
+            }
+        },
+        "appId": {
+            "type": "string",
+            "metadata": {
+                "description": "The Application ID of the TTN Application"
+            }
+        },
+        "appKey": {
+            "type": "string",
+            "metadata": {
+                "description": "The Application Key of the TTN Application"
+            }
         }
     },
     "variables": {
@@ -69,7 +99,7 @@
         },
         {
             "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2016-09-01",
+            "apiVersion": "2015-04-01",
             "name": "[variables('hostingPlanName')]",
             "location": "[parameters('location')]",
             "properties": {
@@ -96,23 +126,23 @@
                     "appSettings": [
                         {
                             "name": "AzureIoTHubHostname",
-                            "value": ""
+                            "value": "[parameters('hubHostname')]"
                         },
                         {
                             "name": "AzureIoTHubAccessKeyOwner",
-                            "value": ""
+                            "value": "[parameters('hubAccessKeyOwner')]"
                         },
                         {
                             "name": "AzureIotHubAccessKey",
-                            "value": ""
+                            "value": "[parameters('hubAccessKey')]"
                         },
                         {
                             "name": "TTNAppID",
-                            "value": ""
+                            "value": "[parameters('appId')]"
                         },
                         {
                             "name": "TTNAppKey",
-                            "value": ""
+                            "value": "[parameters('appKey')]"
                         },
                         {
                             "name": "TTNDiscoveryServerURL",
@@ -138,11 +168,11 @@
                         "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-05-01-preview').key1,';')]",
                         "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-05-01-preview').key1,';')]",
                         "FUNCTIONS_EXTENSION_VERSION": "~1",
-                        "AzureIoTHubHostname": "",
-                        "AzureIoTHubAccessKeyOwner": "",
-                        "AzureIotHubAccessKey": "",
-                        "TTNAppID": "",
-                        "TTNAppKey": "",
+                        "AzureIoTHubHostname": "[parameters('hubHostname')]",
+                        "AzureIoTHubAccessKeyOwner": "[parameters('hubAccessKeyOwner')]",
+                        "AzureIotHubAccessKey": "[parameters('hubAccessKey')]",
+                        "TTNAppID": "[parameters('appId')]",
+                        "TTNAppKey": "[parameters('appKey')]",
                         "TTNDiscoveryServerURL": "http://discovery.thethingsnetwork.org:8080"
                     }
                 },
