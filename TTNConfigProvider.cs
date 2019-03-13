@@ -66,5 +66,10 @@ namespace TTNAzureBridge
         {
             return Environment.GetEnvironmentVariable("TTNAppKey");
         }
+
+        public static string GetTTNBearerToken()
+        {
+            return Environment.GetEnvironmentVariable("TTNBearerToken");
+        }
     }
 }
