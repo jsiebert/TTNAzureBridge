@@ -50,22 +50,10 @@
                 "description": "Location for all resources."
             }
         },
-        "hubHostname": {
+        "hubConnectionString": {
             "type": "string",
             "metadata": {
-                "description": "The Hostname of the Azure IoT Hub"
-            }
-        },
-        "hubAccessKeyOwner": {
-            "type": "string",
-            "metadata": {
-                "description": "The Owner of the Azure IoT Hub Access Key"
-            }
-        },
-        "hubAccessKey": {
-            "type": "string",
-            "metadata": {
-                "description": "The Access Key of the Azure IoT Hub"
+                "description": "The Connection String of the Azure IoT Hub"
             }
         },
         "appId": {
@@ -125,16 +113,8 @@
                     "alwaysOn": true,
                     "appSettings": [
                         {
-                            "name": "AzureIoTHubHostname",
-                            "value": "[parameters('hubHostname')]"
-                        },
-                        {
-                            "name": "AzureIoTHubAccessKeyOwner",
-                            "value": "[parameters('hubAccessKeyOwner')]"
-                        },
-                        {
-                            "name": "AzureIotHubAccessKey",
-                            "value": "[parameters('hubAccessKey')]"
+                            "name": "AzureIoTHubConnectionString",
+                            "value": "[parameters('hubConnectionString')]"
                         },
                         {
                             "name": "TTNAppID",
@@ -167,10 +147,8 @@
                     "properties": {
                         "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-05-01-preview').key1,';')]",
                         "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-05-01-preview').key1,';')]",
-                        "FUNCTIONS_EXTENSION_VERSION": "~1",
-                        "AzureIoTHubHostname": "[parameters('hubHostname')]",
-                        "AzureIoTHubAccessKeyOwner": "[parameters('hubAccessKeyOwner')]",
-                        "AzureIotHubAccessKey": "[parameters('hubAccessKey')]",
+                        "FUNCTIONS_EXTENSION_VERSION": "~2",
+                        "AzureIoTHubConnectionString": "[parameters('hubConnectionString')]",
                         "TTNAppID": "[parameters('appId')]",
                         "TTNAppKey": "[parameters('appKey')]",
                         "TTNDiscoveryServerURL": "http://discovery.thethingsnetwork.org:8080"
@@ -185,7 +163,7 @@
                         "[concat('Microsoft.Web/sites/', variables('functionAppName'))]"
                     ],
                     "properties": {
-                        "packageUri": "https://github.com/jsiebert/TTNAzureBridge/releases/download/v0.0.1/TTNAzureBridge-0.0.1.zip"
+                        "packageUri": "https://github.com/jsiebert/TTNAzureBridge/releases/download/v0.0.2/TTNAzureBridge-0.0.2.zip"
                     }
                 }
             ]

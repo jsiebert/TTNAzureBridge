@@ -6,12 +6,15 @@ namespace TTNAzureBridge
     {
         public static string GetIoTHubConnectionString()
         {
-            return $"HostName={Environment.GetEnvironmentVariable("AzureIoTHubHostname")};SharedAccessKeyName={Environment.GetEnvironmentVariable("AzureIoTHubAccessKeyOwner")};SharedAccessKey={Environment.GetEnvironmentVariable("AzureIotHubAccessKey")}";
+            return Environment.GetEnvironmentVariable("AzureIoTHubConnectionString");
         }
 
         public static string GetDeviceConnectionString(string deviceId, string deviceKey)
         {
-            return $"HostName={Environment.GetEnvironmentVariable("AzureIoTHubHostname")};DeviceId={deviceId};SharedAccessKey={deviceKey}";
+            var connectionString = Environment.GetEnvironmentVariable("AzureIoTHubConnectionString");
+            var connectionStringParts = connectionString.Split(';');
+            var hostnameParts = connectionStringParts[0].Split('=');
+            return $"HostName={hostnameParts[1]};DeviceId={deviceId};SharedAccessKey={deviceKey}";
         }
     }
 }
