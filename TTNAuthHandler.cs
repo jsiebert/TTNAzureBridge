@@ -14,12 +14,22 @@ namespace TTNAzureBridge
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TTNConfigProvider.GetTTNBearerToken());
-            HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
+            const int MAX_RETRIES = 3;
+            HttpResponseMessage response = null;
 
-            if (response.Equals(HttpStatusCode.Unauthorized))
+            for (var retries = 0; retries < MAX_RETRIES; retries++)
             {
-                // TODO: Get bearer token
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TTNConfigProvider.GetTTNBearerToken());
+                response = await base.SendAsync(request, cancellationToken);
+
+                if (response.Equals(HttpStatusCode.Unauthorized))
+                {
+                    TTNConfigProvider.RenewTTNBearerToken();
+                }
+                else
+                {
+                    break;
+                }
             }
 
             return response;
