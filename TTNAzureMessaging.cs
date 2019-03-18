@@ -1,12 +1,14 @@
 using System;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using CaseOnline.Azure.WebJobs.Extensions.Mqtt;
-using CaseOnline.Azure.WebJobs.Extensions.Mqtt.Messaging;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Devices;
 using Microsoft.Azure.Devices.Client;
+using Newtonsoft.Json.Linq;
 
 
 namespace TTNAzureBridge.TTNAzureMessaging
@@ -14,36 +16,29 @@ namespace TTNAzureBridge.TTNAzureMessaging
     public static class TTNAzureMessaging
     {
         [FunctionName("OnTTNUplinkMessage")]
-        public static async Task OnTTNUplinkMessage([MqttTrigger(typeof(TTNConfigProvider), "+/devices/+/up")] IMqttMessage message, ILogger logger)
+        public static async Task OnTTNUplinkMessage([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest request, ILogger logger)
         {
-            logger.LogInformation($"{DateTime.Now:g} Message for topic {message.Topic}");
+            logger.LogInformation($"{DateTime.Now:g} Device to Cloud message received");
 
-            var messageParts = message.Topic.Split('/');
-            var appId = messageParts[0];
-            var deviceId = messageParts[2];
-            var deviceEvent = messageParts[3];
+            var requestBody = await new StreamReader(request.Body).ReadToEndAsync();
+            var jsonData = JObject.Parse(requestBody);
+            var appId = jsonData["app_id"].ToString();
+            var deviceId = jsonData["dev_id"].ToString();
 
             if (appId.Equals(TTNConfigProvider.GetTTNAppId()))
             {
-                // TODO: This is a workaround for https://github.com/chkr1011/MQTTnet/issues/569. To be implemented in the correct way once this is fixed.
-                switch (deviceEvent)
+                using (var registryManager = RegistryManager.CreateFromConnectionString(AzureConfigProvider.GetIoTHubConnectionString()))
                 {
-                    case "up":
-                        {
-                            using (var registryManager = RegistryManager.CreateFromConnectionString(AzureConfigProvider.GetIoTHubConnectionString()))
-                            {
-                                var device = await registryManager.GetDeviceAsync(deviceId);
-                                var deviceClient = DeviceClient.CreateFromConnectionString(AzureConfigProvider.GetDeviceConnectionString(deviceId, device.Authentication.SymmetricKey.PrimaryKey));
-                                var eventMessage = new Microsoft.Azure.Devices.Client.Message(message.GetMessage());
+                    var device = await registryManager.GetDeviceAsync(deviceId);
 
-                                await deviceClient.SendEventAsync(eventMessage);
-                                logger.LogInformation($"{DateTime.Now:g} Sent event from device {deviceId} to IoT Hub");
-                            }
-                        }
-                        break;
+                    using (var deviceClient = DeviceClient.CreateFromConnectionString(AzureConfigProvider.GetDeviceConnectionString(deviceId, device.Authentication.SymmetricKey.PrimaryKey)))
+                    {
+                        var eventMessage = new Microsoft.Azure.Devices.Client.Message(Encoding.UTF8.GetBytes(jsonData.ToString()));
 
-                    default:
-                        break;
+                        await deviceClient.SendEventAsync(eventMessage);
+                    }
+
+                    logger.LogInformation($"{DateTime.Now:g} Sent event from device {deviceId} to IoT Hub");
                 }
             }
         }
