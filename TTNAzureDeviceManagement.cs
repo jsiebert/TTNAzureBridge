@@ -17,34 +17,30 @@ namespace TTNAzureBridge.TTNAzureDeviceManagement
             logger.LogInformation($"{DateTime.Now:g} Message for topic {message.Topic}");
 
             var messageParts = message.Topic.Split('/');
-            var appId = messageParts[0];
             var deviceId = messageParts[2];
             var deviceEvent = messageParts[4];
 
-            if (appId.Equals(TTNConfigProvider.GetTTNAppId()))
+            using (var registryManager = RegistryManager.CreateFromConnectionString(AzureConfigProvider.GetIoTHubConnectionString()))
             {
-                using (var registryManager = RegistryManager.CreateFromConnectionString(AzureConfigProvider.GetIoTHubConnectionString()))
+                // TODO: This is a workaround for https://github.com/chkr1011/MQTTnet/issues/569. To be implemented in the correct way once this is fixed.
+                switch (deviceEvent)
                 {
-                    // TODO: This is a workaround for https://github.com/chkr1011/MQTTnet/issues/569. To be implemented in the correct way once this is fixed.
-                    switch (deviceEvent)
-                    {
-                        case "create":
-                            {
-                                await registryManager.AddDeviceAsync(new Device(deviceId));
-                                logger.LogInformation($"{DateTime.Now:g} Added device {deviceId} to IoT Hub");
-                            }
-                            break;
+                    case "create":
+                        {
+                            await registryManager.AddDeviceAsync(new Device(deviceId));
+                            logger.LogInformation($"{DateTime.Now:g} Added device {deviceId} to IoT Hub");
+                        }
+                        break;
 
-                        case "delete":
-                            {
-                                await registryManager.RemoveDeviceAsync(deviceId);
-                                logger.LogInformation($"{DateTime.Now:g} Removed device {deviceId} from IoT Hub");
-                            }
-                            break;
+                    case "delete":
+                        {
+                            await registryManager.RemoveDeviceAsync(deviceId);
+                            logger.LogInformation($"{DateTime.Now:g} Removed device {deviceId} from IoT Hub");
+                        }
+                        break;
 
-                        default:
-                            break;
-                    }
+                    default:
+                        break;
                 }
             }
         }
