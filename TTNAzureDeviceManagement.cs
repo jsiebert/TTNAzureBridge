@@ -12,7 +12,7 @@ namespace TTNAzureBridge.TTNAzureDeviceManagement
     public static class TTNAzureDeviceManagement
     {
         [FunctionName("OnTTNDeviceEvent")]
-        public static async Task OnTTNDeviceEvent([MqttTrigger(typeof(TTNConfigProvider), "+/devices/+/events/#")] IMqttMessage message, ILogger logger)
+        public static async Task OnTTNDeviceEvent([MqttTrigger(typeof(TTNConfigProvider), "%TTNAppID%/devices/+/events/#")] IMqttMessage message, ILogger logger)
         {
             logger.LogInformation($"{DateTime.Now:g} Message for topic {message.Topic}");
 
