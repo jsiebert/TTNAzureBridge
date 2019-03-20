@@ -11,7 +11,7 @@ using Microsoft.Azure.Devices.Client;
 using Newtonsoft.Json.Linq;
 
 
-namespace TTNAzureBridge.TTNAzureMessaging
+namespace TTNAzureBridge.Messaging
 {
     public static class TTNAzureMessaging
     {
