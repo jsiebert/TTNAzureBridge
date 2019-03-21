@@ -10,13 +10,26 @@ Basically this Integration translates the protocols of The Things Network and Az
 
 To use this Integration you need the following things:
 
+## From The Things Network
+
 - A The Things Network Application. When deploying the Integration you need the Application ID as well as the Application Access Key which can be retrieved from the TTN concole page for your Application.
+- To forward Device to Cloud Message from your The Things Network Application to the Azure IoT Hub you have to [configure a HTTP Integration](https://www.thethingsnetwork.org/docs/applications/http) within your The Things Network Application. In the configuration page of the HTTP Integration, set the default key as Access Key. For the URL use https://<your-azure-funtions-app-url>/api/OnTTNUplinkMessage and set the Method parameter to POST. The rest of the fields must not contain any value.
+
+## From Microsoft Azure
+
 - An Azure IoT Hub. You can create such an IoT Hub in the Azure Portal. For the deployment of the Integration you'll need the Connection String for the "iothubowner" which can be found in the "Shared access policy" section of the IoT Hub settings.
+
+# Deployment
 
 Regarding the deployment of the Integration there are multiple options:
 
-- Using the "Deploy to Azure" button below might be the easiest way. Clicking this button will open a custom deployment template in the Azure Portal where you can insert the necessary information (see above). After confirmation an Azure Functions App will be created automatically and the Integration App will be deployed. After the deployment process has been finished, the Integration App is ready to forward events from your TTN Application to the Azure IoT Hub.
-- You can create the Function App manually using the Azure Portal and then deploy the Integration App using e.g. the [Azure Function Tools for Visual Studio Code](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-function-vs-code). Therefore you'll have to checkout the code from this repostitory, open the project in Visual Studio Code, connect your manually create Azure Functions App in the Azure Functions Tools for Visual Studio code and the use its deployment functionality to deploy the Integration App. The required information (see above) can be entered in the "Application Settings" section in the Azure Functions Tools for Visual Studio Code (the names of the App Settings Keys are: *TTNAppID*, *TTNAppKey* and *AzureIotHubConnectionString*). Additionally an Application Setting with the Key *TTNDiscoveryServerURL* and value http://discovery.thethingsnetwork.org:8080 has to be provided. Mind the Build Notes below.
+## Deploy to Azure
+
+Using the "Deploy to Azure" button below might be the easiest way. Clicking this button will open a custom deployment template in the Azure Portal where you can insert the necessary information (see above). After confirmation an Azure Functions App will be created automatically and the Integration App will be deployed. After the deployment process has been finished, the Integration App is ready to forward events from your TTN Application to the Azure IoT Hub.
+
+## Azure Function Tools for Visual Studio Code
+
+You can create the Function App manually using the Azure Portal and then deploy the Integration App using e.g. the [Azure Function Tools for Visual Studio Code](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-function-vs-code). Therefore you'll have to checkout the code from this repostitory, open the project in Visual Studio Code, connect your manually create Azure Functions App in the Azure Functions Tools for Visual Studio code and the use its deployment functionality to deploy the Integration App. The required information (see above) can be entered in the "Application Settings" section in the Azure Functions Tools for Visual Studio Code (the names of the App Settings Keys are: *TTNAppID*, *TTNAppKey* and *AzureIotHubConnectionString*). Additionally an Application Setting with the Key *TTNDiscoveryServerURL* and value http://discovery.thethingsnetwork.org:8080 has to be provided. Mind the Build Notes below.
 
 # Build Notes
 
