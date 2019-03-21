@@ -13,7 +13,7 @@ To use this Integration you need the following things:
 ## From The Things Network
 
 - A The Things Network Application. When deploying the Integration you need the Application ID as well as the Application Access Key which can be retrieved from the TTN concole page of your Application.
-- To forward Device to Cloud Messages from your The Things Network Application to the Azure IoT Hub you have to [configure a HTTP Integration](https://www.thethingsnetwork.org/docs/applications/http) within your The Things Network Application. In the configuration page of the HTTP Integration, set the default key as Access Key. For the URL use `https://\<your-azure-funtions-app-url\>/api/OnTTNUplinkMessage` and set the Method parameter to POST. The rest of the fields must not contain any value.
+- To forward Device to Cloud Messages from your The Things Network Application to the Azure IoT Hub you have to [configure a HTTP Integration](https://www.thethingsnetwork.org/docs/applications/http) within your The Things Network Application. In the configuration page of the HTTP Integration, set the default key as Access Key. For the URL use `https://<your-azure-funtions-app-url>/api/OnTTNUplinkMessage` and set the Method parameter to POST. The rest of the fields must not contain any value.
 
 ## From Microsoft Azure
 
