@@ -4,7 +4,7 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CaseOnline.Azure.WebJobs.Extensions.Mqtt" Version="1.1.1-beta3" />
+    <PackageReference Include="CaseOnline.Azure.WebJobs.Extensions.Mqtt" Version="1.2.0" />
     <PackageReference Include="Microsoft.Azure.Devices" Version="1.17.2" />
     <PackageReference Include="Microsoft.Azure.Devices.Client" Version="1.19.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventGrid" Version="2.0.0" />
@@ -19,7 +19,4 @@
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
   </ItemGroup>
-  <PropertyGroup>
-    <RestoreSources>$(RestoreSources);../CaseOnline.Azure.WebJobs.Extensions.Mqtt/src/CaseOnline.Azure.WebJobs.Extensions.Mqtt/bin/Debug;https://api.nuget.org/v3/index.json</RestoreSources>
-  </PropertyGroup>
 </Project>
