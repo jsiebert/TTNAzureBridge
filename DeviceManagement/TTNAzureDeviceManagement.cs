@@ -11,37 +11,33 @@ namespace TTNAzureBridge.DeviceManagement
 {
     public static class TTNAzureDeviceManagement
     {
-        [FunctionName("OnTTNDeviceEvent")]
-        public static async Task OnTTNDeviceEvent([MqttTrigger(typeof(TTNConfigProvider), "%TTNAppID%/devices/+/events/#")] IMqttMessage message, ILogger logger)
+        [FunctionName("OnTTNDeviceCreated")]
+        public static async Task OnTTNDeviceCreated([MqttTrigger(typeof(TTNConfigProvider), "%TTNAppID%/devices/+/events/create")] IMqttMessage message, ILogger logger)
         {
-            logger.LogInformation($"{DateTime.Now:g} Message for topic {message.Topic}");
+            logger.LogInformation($"{DateTime.Now:g} Device creation message for topic {message.Topic}");
 
             var messageParts = message.Topic.Split('/');
             var deviceId = messageParts[2];
-            var deviceEvent = messageParts[4];
 
             using (var registryManager = RegistryManager.CreateFromConnectionString(AzureConfigProvider.GetIoTHubConnectionString()))
             {
-                // TODO: This is a workaround for https://github.com/chkr1011/MQTTnet/issues/569. To be implemented in the correct way once this is fixed.
-                switch (deviceEvent)
-                {
-                    case "create":
-                        {
-                            await registryManager.AddDeviceAsync(new Device(deviceId));
-                            logger.LogInformation($"{DateTime.Now:g} Added device {deviceId} to IoT Hub");
-                        }
-                        break;
+                await registryManager.AddDeviceAsync(new Device(deviceId));
+                logger.LogInformation($"{DateTime.Now:g} Added device {deviceId} to IoT Hub");
+            }
+        }
 
-                    case "delete":
-                        {
-                            await registryManager.RemoveDeviceAsync(deviceId);
-                            logger.LogInformation($"{DateTime.Now:g} Removed device {deviceId} from IoT Hub");
-                        }
-                        break;
+        [FunctionName("OnTTNDeviceDeleted")]
+        public static async Task OnTTNDeviceDeleted([MqttTrigger(typeof(TTNConfigProvider), "%TTNAppID%/devices/+/events/delete")] IMqttMessage message, ILogger logger)
+        {
+            logger.LogInformation($"{DateTime.Now:g} Device deletion message for topic {message.Topic}");
 
-                    default:
-                        break;
-                }
+            var messageParts = message.Topic.Split('/');
+            var deviceId = messageParts[2];
+
+            using (var registryManager = RegistryManager.CreateFromConnectionString(AzureConfigProvider.GetIoTHubConnectionString()))
+            {
+                await registryManager.RemoveDeviceAsync(deviceId);
+                logger.LogInformation($"{DateTime.Now:g} Removed device {deviceId} from IoT Hub");
             }
         }
     }
